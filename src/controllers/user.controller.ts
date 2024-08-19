@@ -27,6 +27,7 @@ const authService = new AuthService()
  *   description: API endpoints for managing users
  *   security:
  *     - BearerAuth: []
+ */
 
 /**
  * @swagger

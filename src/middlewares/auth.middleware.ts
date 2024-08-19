@@ -8,7 +8,6 @@ const logger = log4js.getLogger();
 const tokenAuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
     try {
         const token = req.headers.authorization?.split(' ')[1];
-        console.log(token);
         
         if (!token) {
             throw new Error("Invalid token");

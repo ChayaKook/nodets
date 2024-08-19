@@ -27,6 +27,7 @@ const authService = new AuthService()
  *   description: API endpoints for managing Orders
  *   security:
  *     - BearerAuth: []
+ */
 
 /**
  * @swagger
