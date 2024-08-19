@@ -21,7 +21,7 @@ const swaggerOptions = {
     },
   },
   apis: [path.resolve(__dirname, './controllers/*.ts')],
-  security: [{ apiKeyAuth: [] }],
+  security: [{ apiKeyAuth: [Headers] }],
 };
 
 const swaggerSpec = swaggerJSDoc(swaggerOptions);

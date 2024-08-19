@@ -42,7 +42,7 @@ router.post('/', async (req: Request, res: Response) => {
             }
         }
         let userDetails = { email: req.params.email, password: req.params.password };
-        // const hashedPassword = await bcrypt.hash(userDetails.password, saltRounds);
+        
         const user = await User.findOne({ email: userDetails.email })
         const isPasswordMatch = await bcrypt.compare(userDetails.password, user!.password);
 

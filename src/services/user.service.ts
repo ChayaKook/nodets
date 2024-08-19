@@ -54,8 +54,11 @@ class UserService {
     }
 
     public async deleteUser(userId: string): Promise<void> {
-        throw new Error("---");
-        // Implement logic to delete a user from the database
+        try {
+           User.findOneAndDelete({ _id: userId });
+        } catch (error) {
+            throw error
+        }
     }
 }
 

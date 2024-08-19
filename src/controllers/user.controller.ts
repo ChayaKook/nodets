@@ -1,6 +1,6 @@
 // user.controller.ts
 
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import express from 'express';
 import UserService from '../services/user.service';
 import { User } from '../db/schemas/user.schema';
@@ -11,13 +11,21 @@ const logger = log4js.getLogger();
 
 const router = express.Router();
 const userService = new UserService();
+const bcrypt = require('bcrypt');
+import { saltRounds, TOKEN_KEY } from "../../constants";
+import AuthService from '../services/auth.service';
+import tokenAuthMiddleware from '../middlewares/auth.middleware';
+import { isContext } from 'vm';
+const authService = new AuthService()
+
 
 /**
  * @swagger
  * tags:
  *   name: Users
  *   description: API endpoints for managing users
- */
+ *   security:
+ *     - BearerAuth: []
 
 /**
  * @swagger
@@ -25,6 +33,8 @@ const userService = new UserService();
  *   get:
  *     summary: Get all users
  *     tags: [Users]
+ *     security:
+ *       - BearerAuth: []
  *     responses:
  *       '200':
  *         description: A list of users
@@ -44,10 +54,12 @@ router.get('/', async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /users/{id}:
+ * /users/:id:
  *   get:
  *     summary: Get a user by ID
  *     tags: [Users]
+ *     security:
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -60,7 +72,7 @@ router.get('/', async (req: Request, res: Response) => {
  *         description: User details
  */
 
-router.get('/users/:id', (req: Request, res: Response) => {
+router.get('/users/:id',tokenAuthMiddleware, (req: Request, res: Response) => {
     try {
         const userId = req.params.id;
         logger.info(`[GET] - ${new Date().toISOString()} - getUserById - Success`);
@@ -77,23 +89,31 @@ router.get('/users/:id', (req: Request, res: Response) => {
  *   post:
  *     summary: Create a new user
  *     tags: [Users]
+ *     security:
+ *       - BearerAuth: []
  *     responses:
  *       '200':
  *         description: User created successfully
  */
 
-router.post('/', (body: { userName: string, email: string, password: string }) => {
+router.post('/',tokenAuthMiddleware, async (req:Request, res:Response) => {
     try {
+        const body = {
+            userName: "chaya",
+            email: "chaya@gmail",
+            password: "10987"
+        }
         console.log(body);
+        const hashedPassword = await bcrypt.hash(body.password, saltRounds);
 
-        const user: User = { username: body.userName, email: body.email, password: body.password };
+        const user: User = { username: body.userName, email: body.email, password: hashedPassword };
         if (!user) {
             // throw new Error("Bad Params");
             // return res.status(400).send("bad params")
         }
         const createdUser = userService.createUser(user);
         logger.info(`[POST] - ${new Date().toISOString()} - createUser - Success`);
-        return createdUser;
+        res.send(createdUser);
     } catch (error) {
         logger.error(`[POST] - ${new Date().toISOString()} - createUser - Error: ${error}`);
         // throw error;
@@ -102,16 +122,18 @@ router.post('/', (body: { userName: string, email: string, password: string }) =
 
 /**
  * @swagger
- * /users/{id}:
+ * /users/:id:
  *   put:
  *     summary: Update a user
  *     tags: [Users]
+ *     security:
+ *       - BearerAuth: []
  *     responses:
  *       '200':
  *         description: User updated successfully
  */
 
-router.put('/:id', (req: Request, res: Response) => {
+router.put('/:id',tokenAuthMiddleware, (req: Request, res: Response) => {
     try {
         logger.info(`[UPDATE] - ${new Date().toISOString()} - updateUser - Success`);
 
@@ -126,10 +148,12 @@ router.put('/:id', (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /users/{id}:
+ * /users/:id:
  *   delete:
  *     summary: Delete a user by ID
  *     tags: [Users]
+ *     security:
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -142,12 +166,12 @@ router.put('/:id', (req: Request, res: Response) => {
  *         description: User deleted successfully
  */
 
-router.delete('/:id', async (req: Request, res: Response): Promise<void> => {
+router.delete('/:id',tokenAuthMiddleware, async (req: Request, res: Response): Promise<void> => {
     try {
-        logger.info(`[DELETE] - ${new Date().toISOString()} - deleteUser - Success`);
-
         const userId = req.params.id;
         await userService.deleteUser(userId);
+        logger.info(`[DELETE] - ${new Date().toISOString()} - deleteUser - Success`);
+
         res.status(204).send();
     } catch (error) {
         logger.error(`[DELETE] - ${new Date().toISOString()} - deleteUser - Error: ${error}`);
