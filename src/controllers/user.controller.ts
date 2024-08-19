@@ -30,12 +30,10 @@ const userService = new UserService();
  *         description: A list of users
  */
 
-router.get('/', (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response) => {
     try {
-        let users = userService.getUsers();
-        users.then(users => {
-            res.send(users)
-        });
+        let users = await userService.getUsers();
+        res.send(users)
         logger.info(`[GET] - ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()} - getUsers - Success`);
 
     } catch (error) {
