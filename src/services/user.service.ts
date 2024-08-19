@@ -32,7 +32,8 @@ class UserService {
     public async createUser(user: User): Promise<User> {
         try {
             const isOccupied = await User.findOne({email:user.email})
-            if(!isOccupied) {
+            
+            if(isOccupied) {
                 throw new Error(`Email already in use`);
             }
             const newUser = await User.create(user);

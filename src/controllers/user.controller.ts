@@ -111,24 +111,29 @@ router.get('/users/:id', (req: Request, res: Response) => {
  */
 
 
-router.post('/', async (req:Request, res: Response) => {
+router.post('/', async (req: Request, res: Response) => {
     try {
-        console.log(req.body.user);
-        const body = req.body.user
+        const body = req.body; // Access the entire request body
+        console.log(body);
+        
+        if(body.password === undefined){
+            throw new Error("Bad Request");
+        }
         const hashedPassword = await bcrypt.hash(body.password, saltRounds);
 
         const user: User = { username: body.userName, email: body.email, password: hashedPassword };
         if (!user) {
-            throw new Error("Bad Params");
+            throw new Error("Created Faild");
         }
-        const createdUser = userService.createUser(user);
+        const createdUser = await userService.createUser(user);
         logger.info(`[POST] - ${new Date().toISOString()} - createUser - Success`);
         res.send(createdUser);
-    } catch (error:Error | any) {
+    } catch (error:Error|any) {
         logger.error(`[POST] - ${new Date().toISOString()} - createUser - Error: ${error}`);
-        res.status(error?.status ?? 400).send(error.message)
+        res.status(400).send(error!.message);
     }
 });
+
 
 /**
  * @swagger

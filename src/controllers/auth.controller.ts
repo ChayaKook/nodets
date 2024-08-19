@@ -35,13 +35,8 @@ const authService = new AuthService()
  */
 router.post('/', async (req: Request, res: Response) => {
     try {
-        const req={
-            params: {
-                email: 'chaya@gmail',
-                password: '10987'
-            }
-        }
-        let userDetails = { email: req.params.email, password: req.params.password };
+        const body = req.body;
+        let userDetails = { email: body.email, password: body.password };
         
         const user = await User.findOne({ email: userDetails.email })
         const isPasswordMatch = await bcrypt.compare(userDetails.password, user!.password);

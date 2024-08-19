@@ -10,11 +10,11 @@ const swaggerOptions = {
     securityDefinitions: {
       apiKeyAuth: {
         type: 'apiKey',
-        in: 'header', // Corrected from 'Headers' to 'header'
-        name: 'Authorization',
+        in: 'header',
+        name: 'authorization',
       },
     },
   },
   apis: [path.resolve(__dirname, './controllers/*.ts')],
-  security: [{ apiKeyAuth: [] }], // Corrected from [Headers] to []
+  security: [{ apiKeyAuth: [] }],
 };
