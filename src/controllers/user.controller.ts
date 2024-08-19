@@ -4,7 +4,10 @@ import { Request, Response } from 'express';
 import express from 'express';
 import UserService from '../services/user.service';
 import { User } from '../db/schemas/user.schema';
-import logger from '../logger';
+import log4js from 'log4js';
+
+log4js.configure('./log4js.json');
+const logger = log4js.getLogger();
 
 const router = express.Router();
 const userService = new UserService();
