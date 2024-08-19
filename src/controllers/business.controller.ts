@@ -24,10 +24,12 @@ const authService = new AuthService()
 /**
  * @swagger
  * tags:
- *   name: Business
+ *   name: business
  *   description: API endpoints for managing business details
  *   security:
  *     - BearerAuth: []
+ */
+
 
 /**
  * @swagger
