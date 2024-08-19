@@ -8,6 +8,8 @@ import connectDB from './db/db';
 import errorHandler from './middlewares/errorHandler';
 import notFoundHandler from './middlewares/notFoundHandler';
 import {router as userController} from './controllers/user.controller';
+import {router as authController} from './controllers/auth.controller';
+
 
 connectDB(); 
 const app = express();
@@ -36,6 +38,7 @@ const swaggerOptions = {
 const swaggerSpec = swaggerJSDoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/users', userController);
+app.use('/auth', authController);
 app.use(errorHandler);
 app.use(notFoundHandler)
 

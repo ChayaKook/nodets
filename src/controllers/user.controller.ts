@@ -21,7 +21,7 @@ const userService = new UserService();
 
 /**
  * @swagger
- * /api/users:
+ * /users:
  *   get:
  *     summary: Get all users
  *     tags: [Users]
@@ -44,7 +44,7 @@ router.get('/', async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /api/users/{id}:
+ * /users/{id}:
  *   get:
  *     summary: Get a user by ID
  *     tags: [Users]
@@ -73,7 +73,7 @@ router.get('/users/:id', (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /api/users:
+ * /users:
  *   post:
  *     summary: Create a new user
  *     tags: [Users]
@@ -102,7 +102,7 @@ router.post('/', (body: { userName: string, email: string, password: string }) =
 
 /**
  * @swagger
- * /api/users/{id}:
+ * /users/{id}:
  *   put:
  *     summary: Update a user
  *     tags: [Users]
@@ -126,7 +126,7 @@ router.put('/:id', (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /api/users/{id}:
+ * /users/{id}:
  *   delete:
  *     summary: Delete a user by ID
  *     tags: [Users]
