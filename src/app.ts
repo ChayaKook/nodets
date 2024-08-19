@@ -9,6 +9,9 @@ import errorHandler from './middlewares/errorHandler';
 import notFoundHandler from './middlewares/notFoundHandler';
 import {router as userController} from './controllers/user.controller';
 import {router as authController} from './controllers/auth.controller';
+import {router as productController} from './controllers/product.controller';
+import {router as businessController} from './controllers/business.controller';
+import {router as orderController} from './controllers/order.controller';
 import tokenAuthMiddleware from './middlewares/auth.middleware';
 
 
@@ -41,6 +44,9 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/auth', authController);
 app.use(tokenAuthMiddleware);
 app.use('/users', userController);
+app.use('/products', productController);
+app.use('/business', businessController);
+app.use('/orders', orderController);
 app.use(errorHandler);
 app.use(notFoundHandler)
 

@@ -48,9 +48,10 @@ router.get('/', async (req: Request, res: Response) => {
         res.send(business)
         logger.info(`[GET] - ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()} - getBusiness - Success`);
 
-    } catch (error) {
+    } catch (error:any) {
         logger.error(`[GET] - ${new Date().toISOString()} - getBusiness - Error: ${error}`);
-        throw error;
+        const statusCode = error!.status! || 500;
+        res.status(statusCode).send({ message: error.message })
     }
 });
 
@@ -69,10 +70,14 @@ router.get('/', async (req: Request, res: Response) => {
 
 router.post('/', async (req:Request, res:Response) => {
     try {
+        const body = req.body;
+        const business = await businessService.createBusiness(body);
         logger.info(`[POST] - ${new Date().toISOString()} - createBusiness - Success`);
-    } catch (error) {
+        res.send(business)
+    } catch (error:any) {
         logger.error(`[POST] - ${new Date().toISOString()} - createBusiness - Error: ${error}`);
-        throw error;
+        const statusCode = error!.status! || 500;
+        res.status(statusCode).send({ message: error.message })
     }
 });
 
@@ -92,9 +97,10 @@ router.post('/', async (req:Request, res:Response) => {
 router.put('/:id', (req: Request, res: Response) => {
     try {
         logger.info(`[UPDATE] - ${new Date().toISOString()} - updateBusiness - Success`);
-    } catch (error) {
+    } catch (error:any) {
         logger.error(`[UPDATE] - ${new Date().toISOString()} - updateBusiness - Error: ${error}`);
-        throw error;
+        const statusCode = error!.status! || 500;
+        res.status(statusCode).send({ message: error.message })
     }
 });
 
@@ -125,9 +131,10 @@ router.delete('/:id', async (req: Request, res: Response): Promise<void> => {
         logger.info(`[DELETE] - ${new Date().toISOString()} - deleteBusiness - Success`);
 
         res.status(204).send();
-    } catch (error) {
+    } catch (error:any) {
         logger.error(`[DELETE] - ${new Date().toISOString()} - deleteBusiness - Error: ${error}`);
-        throw error;
+        const statusCode = error!.status! || 500;
+        res.status(statusCode).send({ message: error.message })
     }
 });
 

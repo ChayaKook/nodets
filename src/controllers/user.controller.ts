@@ -47,9 +47,10 @@ router.get('/', async (req: Request, res: Response) => {
         res.send(users)
         logger.info(`[GET] - ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()} - getUsers - Success`);
 
-    } catch (error) {
+    } catch (error:any) {
         logger.error(`[GET] - ${new Date().toISOString()} - getUsers - Error: ${error}`);
-        throw error;
+        const statusCode = error!.status! || 500;
+        res.status(statusCode).send({ message: error.message })
     }
 });
 
@@ -78,9 +79,10 @@ router.get('/users/:id', (req: Request, res: Response) => {
         const userId = req.params.id;
         logger.info(`[GET] - ${new Date().toISOString()} - getUserById - Success`);
         return userService.getUserById(userId);
-    } catch (error) {
+    } catch (error:any) {
         logger.error(`[GET] - ${new Date().toISOString()} - getUserById - Error: ${error}`);
-        throw error;
+        const statusCode = error!.status! || 500;
+        res.status(statusCode).send({ message: error.message })
     }
 });
 
@@ -92,7 +94,7 @@ router.get('/users/:id', (req: Request, res: Response) => {
  *     tags: [Users]
  *     security:
  *       - BearerAuth: []
- *     requestBody:
+ *     Body:
  *       required: true
  *       content:
  *         application/json:
@@ -114,7 +116,6 @@ router.get('/users/:id', (req: Request, res: Response) => {
 router.post('/', async (req: Request, res: Response) => {
     try {
         const body = req.body; // Access the entire request body
-        console.log(body);
         
         if(body.password === undefined){
             throw new Error("Bad Request");
@@ -155,9 +156,10 @@ router.put('/:id', (req: Request, res: Response) => {
         const updatedUser: User = req.body;
         const user = userService.updateUser(updatedUser);
         res.status(200).json(user);
-    } catch (error) {
+    } catch (error:any) {
         logger.error(`[UPDATE] - ${new Date().toISOString()} - updateUser - Error: ${error}`);
-        throw error;
+        const statusCode = error!.status! || 500;
+        res.status(statusCode).send({ message: error.message })
     }
 });
 
@@ -188,9 +190,10 @@ router.delete('/:id', async (req: Request, res: Response): Promise<void> => {
         logger.info(`[DELETE] - ${new Date().toISOString()} - deleteUser - Success`);
 
         res.status(204).send();
-    } catch (error) {
+    } catch (error:any) {
         logger.error(`[DELETE] - ${new Date().toISOString()} - deleteUser - Error: ${error}`);
-        throw error;
+        const statusCode = error!.status! || 500;
+        res.status(statusCode).send({ message: error.message })
     }
 });
 

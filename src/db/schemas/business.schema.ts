@@ -10,11 +10,7 @@ export interface Business {
   name: string;
   phone: string;
   address: string;
-  admin: {
-    _id: string;
-    adminKey: string;
-    user: User;
-  }
+  admin: User
 }
 
 /**
@@ -26,11 +22,7 @@ export interface BusinessDocument extends Document {
   name: string;
   phone: string;
   address: string;
-  admin: {
-    _id: string;
-    adminKey: string;
-    user: User;
-  }
+  admin: User
 }
 
 /**
@@ -43,11 +35,7 @@ const BusinessSchema = new mongoose.Schema({
   name: { type: String, required: true },
   phone: { type: String, required: true },
   address: { type: String, required: true },
-  admin: {
-    _id: { type: String, required: true },
-    adminKey: { type: String, required: true },
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
-  }
+  admin: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
 });
 
 export const Business = mongoose.model<BusinessDocument>('Business', BusinessSchema);
