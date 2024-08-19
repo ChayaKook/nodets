@@ -11,37 +11,42 @@ const userService = new UserService();
 
 /**
  * @swagger
+ * tags:
+ *   name: Users
+ *   description: API endpoints for managing users
+ */
+
+/**
+ * @swagger
  * /api/users:
- *   post:
- *     summary: Create a new user
+ *   get:
+ *     summary: Get all users
+ *     tags: [Users]
  *     responses:
  *       '200':
- *         description: User created successfully
+ *         description: A list of users
  */
-router.get('/', (req:Request, res:Response) => {
-    try {
-        logger.info(`[GET] - ${new Date().toISOString()} - getUsers - Success`);
 
+router.get('/', (req: Request, res: Response) => {
+    try {
         let users = userService.getUsers();
         users.then(users => {
-            users.forEach(user => {
-               console.log(`User: ${JSON.stringify(user)}`);
-            });
+            res.send(users)
         });
-        
-        return users
+        logger.info(`[GET] - ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()} - getUsers - Success`);
+
     } catch (error) {
         logger.error(`[GET] - ${new Date().toISOString()} - getUsers - Error: ${error}`);
         throw error;
     }
-}
-)
+});
 
 /**
  * @swagger
- * /api/users/:id:
+ * /api/users/{id}:
  *   get:
  *     summary: Get a user by ID
+ *     tags: [Users]
  *     parameters:
  *       - in: path
  *         name: id
@@ -53,6 +58,7 @@ router.get('/', (req:Request, res:Response) => {
  *       '200':
  *         description: User details
  */
+
 router.get('/users/:id', (req: Request, res: Response) => {
     try {
         const userId = req.params.id;
@@ -62,17 +68,19 @@ router.get('/users/:id', (req: Request, res: Response) => {
         logger.error(`[GET] - ${new Date().toISOString()} - getUserById - Error: ${error}`);
         throw error;
     }
-})
+});
 
 /**
  * @swagger
  * /api/users:
  *   post:
  *     summary: Create a new user
+ *     tags: [Users]
  *     responses:
  *       '200':
  *         description: User created successfully
  */
+
 router.post('/', (body: { userName: string, email: string, password: string }) => {
     try {
         console.log(body);
@@ -89,18 +97,20 @@ router.post('/', (body: { userName: string, email: string, password: string }) =
         logger.error(`[POST] - ${new Date().toISOString()} - createUser - Error: ${error}`);
         // throw error;
     }
-})
+});
 
 /**
  * @swagger
- * /api/users:
+ * /api/users/{id}:
  *   put:
  *     summary: Update a user
+ *     tags: [Users]
  *     responses:
  *       '200':
  *         description: User updated successfully
  */
-router.put('/:id',  (req: Request, res: Response)=> {
+
+router.put('/:id', (req: Request, res: Response) => {
     try {
         logger.info(`[UPDATE] - ${new Date().toISOString()} - updateUser - Success`);
 
@@ -109,15 +119,16 @@ router.put('/:id',  (req: Request, res: Response)=> {
         res.status(200).json(user);
     } catch (error) {
         logger.error(`[UPDATE] - ${new Date().toISOString()} - updateUser - Error: ${error}`);
-        throw error
+        throw error;
     }
-})
+});
 
 /**
  * @swagger
  * /api/users/{id}:
  *   delete:
  *     summary: Delete a user by ID
+ *     tags: [Users]
  *     parameters:
  *       - in: path
  *         name: id
@@ -126,9 +137,10 @@ router.put('/:id',  (req: Request, res: Response)=> {
  *           type: string
  *         description: User ID
  *     responses:
- *       '200':
+ *       '204':
  *         description: User deleted successfully
  */
+
 router.delete('/:id', async (req: Request, res: Response): Promise<void> => {
     try {
         logger.info(`[DELETE] - ${new Date().toISOString()} - deleteUser - Success`);
@@ -138,8 +150,8 @@ router.delete('/:id', async (req: Request, res: Response): Promise<void> => {
         res.status(204).send();
     } catch (error) {
         logger.error(`[DELETE] - ${new Date().toISOString()} - deleteUser - Error: ${error}`);
-        throw error
+        throw error;
     }
-})
+});
 
 export { router };
