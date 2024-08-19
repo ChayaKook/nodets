@@ -5,7 +5,8 @@ import swaggerUi from 'swagger-ui-express';
 import swaggerJSDoc from 'swagger-jsdoc';
 import path from 'path';
 import connectDB from './db/db';
-import { errorHandler } from './errorHandler';
+import errorHandler from './middlewares/errorHandler';
+import notFoundHandler from './middlewares/notFoundHandler';
 import {router as userController} from './controllers/user.controller';
 
 connectDB(); 
@@ -35,10 +36,8 @@ const swaggerOptions = {
 const swaggerSpec = swaggerJSDoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/users', userController);
-
-app.use((error:any, req:any, res:any, next:any) => {
-    errorHandler(error, req, res, next);
-});
+app.use(errorHandler);
+app.use(notFoundHandler)
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
