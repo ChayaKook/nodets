@@ -1,9 +1,4 @@
-import swaggerUi from 'swagger-ui-express';
-import swaggerJSDoc from 'swagger-jsdoc';
-import express from 'express';
-import path from 'path';
-
-const app = express();
+import path from "path";
 
 const swaggerOptions = {
   swaggerDefinition: {
@@ -15,17 +10,11 @@ const swaggerOptions = {
     securityDefinitions: {
       apiKeyAuth: {
         type: 'apiKey',
-        in: 'header',
+        in: 'header', // Corrected from 'Headers' to 'header'
         name: 'Authorization',
       },
     },
   },
   apis: [path.resolve(__dirname, './controllers/*.ts')],
-  security: [{ apiKeyAuth: [Headers] }],
+  security: [{ apiKeyAuth: [] }], // Corrected from [Headers] to []
 };
-
-const swaggerSpec = swaggerJSDoc(swaggerOptions);
-
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-export default app;

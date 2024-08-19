@@ -13,11 +13,7 @@ class UserService {
             }
             return user;
         } catch (error) {
-            console.log("service - getByIdUser");
-
-            console.log(error);
-
-            // throw error;
+            throw error;
         }
     }
 
@@ -29,15 +25,16 @@ class UserService {
             }
             return users;
         } catch (error) {
-            console.log("getUsers");
-            console.log(error);
-
             throw error;
         }
     }
 
     public async createUser(user: User): Promise<User> {
         try {
+            const isOccupied = await User.findOne({email:user.email})
+            if(!isOccupied) {
+                throw new Error(`Email already in use`);
+            }
             const newUser = await User.create(user);
             if (!user) {
                 throw new Error(`User faild to created`);
@@ -48,9 +45,13 @@ class UserService {
         }
     }
 
-    public async updateUser(user: User): Promise<User> {
-        throw new Error("---");
-        // Implement logic to update an existing user in the database
+    public async updateUser(user: User): Promise<User|any> {
+        try {
+            const newUser = await User.updateOne(user);
+            return newUser;
+         } catch (error) {
+             throw error
+         }
     }
 
     public async deleteUser(userId: string): Promise<void> {

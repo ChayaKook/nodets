@@ -16,6 +16,7 @@ import { saltRounds, TOKEN_KEY } from "../../constants";
 import AuthService from '../services/auth.service';
 import tokenAuthMiddleware from '../middlewares/auth.middleware';
 import { isContext } from 'vm';
+import { RequestBody } from 'swagger-jsdoc';
 const authService = new AuthService()
 
 
@@ -72,7 +73,7 @@ router.get('/', async (req: Request, res: Response) => {
  *         description: User details
  */
 
-router.get('/users/:id',tokenAuthMiddleware, (req: Request, res: Response) => {
+router.get('/users/:id', (req: Request, res: Response) => {
     try {
         const userId = req.params.id;
         logger.info(`[GET] - ${new Date().toISOString()} - getUserById - Success`);
@@ -91,32 +92,41 @@ router.get('/users/:id',tokenAuthMiddleware, (req: Request, res: Response) => {
  *     tags: [Users]
  *     security:
  *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
  *     responses:
  *       '200':
  *         description: User created successfully
  */
 
-router.post('/',tokenAuthMiddleware, async (req:Request, res:Response) => {
+
+router.post('/', async (req:Request, res: Response) => {
     try {
-        const body = {
-            userName: "chaya",
-            email: "chaya@gmail",
-            password: "10987"
-        }
-        console.log(body);
+        console.log(req.body.user);
+        const body = req.body.user
         const hashedPassword = await bcrypt.hash(body.password, saltRounds);
 
         const user: User = { username: body.userName, email: body.email, password: hashedPassword };
         if (!user) {
-            // throw new Error("Bad Params");
-            // return res.status(400).send("bad params")
+            throw new Error("Bad Params");
         }
         const createdUser = userService.createUser(user);
         logger.info(`[POST] - ${new Date().toISOString()} - createUser - Success`);
         res.send(createdUser);
-    } catch (error) {
+    } catch (error:Error | any) {
         logger.error(`[POST] - ${new Date().toISOString()} - createUser - Error: ${error}`);
-        // throw error;
+        res.status(error?.status ?? 400).send(error.message)
     }
 });
 
@@ -133,7 +143,7 @@ router.post('/',tokenAuthMiddleware, async (req:Request, res:Response) => {
  *         description: User updated successfully
  */
 
-router.put('/:id',tokenAuthMiddleware, (req: Request, res: Response) => {
+router.put('/:id', (req: Request, res: Response) => {
     try {
         logger.info(`[UPDATE] - ${new Date().toISOString()} - updateUser - Success`);
 
@@ -166,7 +176,7 @@ router.put('/:id',tokenAuthMiddleware, (req: Request, res: Response) => {
  *         description: User deleted successfully
  */
 
-router.delete('/:id',tokenAuthMiddleware, async (req: Request, res: Response): Promise<void> => {
+router.delete('/:id', async (req: Request, res: Response): Promise<void> => {
     try {
         const userId = req.params.id;
         await userService.deleteUser(userId);
