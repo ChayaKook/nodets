@@ -116,20 +116,20 @@ router.get('/:id', (req: Request, res: Response) => {
 
 router.post('/', async (req: Request, res: Response) => {
     try {
-        const body = req.body; // Access the entire request body
-        
-        if(body.password === undefined){
+        const body = req.body;
+        if(!(body.username&&body.password&&body.email)) {
             throw new Error("Bad Request");
         }
         const hashedPassword = await bcrypt.hash(body.password, saltRounds);
 
-        const user: User = { username: body.userName, email: body.email, password: hashedPassword };
+        const user: User = { username: body.username, email: body.email, password: hashedPassword };
         if (!user) {
             throw new Error("Created Faild");
         }
         const createdUser = await userService.createUser(user);
-        logger.info(`[POST] - ${new Date().toISOString()} - createUser - Success`);
-        res.send({user: createdUser});
+        logger.info(`[POST] - ${new Date().toISOString()} - createUser - Success ${createdUser._id}`);
+        res.json(createdUser);
+        // res.sendStatus(201).send(createdUser);
     } catch (error:Error|any) {
         logger.error(`[POST] - ${new Date().toISOString()} - createUser - Error: ${error}`);
         res.status(400).send(error!.message);
@@ -150,13 +150,12 @@ router.post('/', async (req: Request, res: Response) => {
  *         description: User updated successfully
  */
 
-router.put('/:id', (req: Request, res: Response) => {
+router.put('/:id', async (req: Request, res: Response) => {
     try {
-        logger.info(`[UPDATE] - ${new Date().toISOString()} - updateUser - Success`);
-
-        const updatedUser: User = req.body;
-        const user = userService.updateUser(updatedUser);
-        res.status(200).json(user);
+        const user: User = req.body;
+        const updatedUser = await userService.updateUser(user);
+        logger.info(`[UPDATE] - ${new Date().toISOString()} - updateUser - Success ${JSON.stringify(updatedUser._id)}`);
+        res.json(updatedUser);
     } catch (error:any) {
         logger.error(`[UPDATE] - ${new Date().toISOString()} - updateUser - Error: ${error}`);
         const statusCode = error!.status! || 500;
@@ -189,7 +188,6 @@ router.delete('/:id', async (req: Request, res: Response): Promise<void> => {
         const userId = req.params.id;
         await userService.deleteUser(userId);
         logger.info(`[DELETE] - ${new Date().toISOString()} - deleteUser - Success`);
-
         res.status(204).send();
     } catch (error:any) {
         logger.error(`[DELETE] - ${new Date().toISOString()} - deleteUser - Error: ${error}`);

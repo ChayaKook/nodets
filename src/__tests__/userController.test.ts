@@ -17,20 +17,21 @@ describe('User API', () => {
     beforeAll(async () => {
         try {
             //get token for all tests
-            token  = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmMzOGViNzcxYjk5NzQzM2JjM2UwYzQiLCJ1c2VyTmFtZSI6ImJhdGkiLCJlbWFpbCI6ImJAYiIsImlhdCI6MTcyNDE2NjA5OCwiZXhwIjoxNzI0MTc2ODk4fQ.lMGbYGJtO3xLW9EoN_PhwKfoS-haRKYsoBGweiZuN9g"
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmM1MTQ1NDZhNDBhNDY5YTNjMGExNTUiLCJ1c2VyTmFtZSI6ImJhdGkiLCJlbWFpbCI6ImJAYiIsImlhdCI6MTcyNDE5MTg0NCwiZXhwIjoxNzI0MjAyNjQ0fQ.DJ62YY82O5wQ85F6MiuOqjvOKtw81KqRCNJ211el0WQ"
             // logger.info("before all")
 
             // const user = {
-            //     userName: "test",
-            //     email: 't@t',
-            //     password: 'ttt',
+            //     userName: "bati",
+            //     email: 'b@b',
+            //     password: 'bbb',
             // };
-            // const newUser = await request(app).post('/users/').send(user);
-            // logger.info("newUser: " + JSON.stringify((newUser as any)));
+            // const newToken = await request(app).post('/users/').send(user);
+            // logger.info("token: " + JSON.stringify(newToken.body));
+            // token = newToken.body
 
-            // userTest = (newUser as any).req.data
+            // userTest = newUser.body
             // userTestId = userTest._id!;
-            // const response = await request(app).post('/auth/').send({ "email": userTest!.email, "password": userTest.password });
+            // const response = await request(app).post('/auth/').send({ "email": userTest.email, "password": userTest.password });
 
             // token = response.body.token;
 
@@ -60,7 +61,49 @@ describe('User API', () => {
         expect(response.body).toBeInstanceOf(Array);
     });
 
-    // Rest of your tests...
+    it('POST /api/users/', async () => {
+        const user: User = {
+            username: 'test',
+            email: 't@t',
+            password: 'ttt',
+        };
+
+        const response = await request(app)
+            .post('/users/')
+            .send(user)
+            .set('Authorization', `Bearer ${token}`);
+        userTest = response.body
+        userTestId = response.body._id!
+        expect(response.status).toBeGreaterThanOrEqual(200);
+        expect(response.status).toBe(200);
+        expect(response.body.email).toBe('t@t');
+        expect(response.body.username).toBe('test');
+    });
+
+    it('PUT /users/:id', async () => {
+        const updatedUser: User = {
+            username: 'test updated',
+            email: 't@t updated',
+            password: 'ttt updated',
+        };
+
+        const response = await request(app)
+            .put(`/users/${userTestId}`)
+            .send(updatedUser)
+            .set('Authorization', `Bearer ${token}`);
+        expect(response.status).toBeLessThan(401);
+        expect(response.status).toBeGreaterThanOrEqual(200);
+        expect(response.status).toBe(200);
+    });
+
+    it('DELETE /users/:id', async () => {
+        const response = await request(app)
+            .delete(`/users/${userTestId}`)
+            .set('Authorization', `Bearer ${token}`);
+        expect(response.status).toBeGreaterThanOrEqual(200);
+        expect(response.status).toBe(204);
+    });
+
 });
 
 // describe('User API', async () => {

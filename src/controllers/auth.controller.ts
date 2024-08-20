@@ -36,18 +36,26 @@ const authService = new AuthService()
 router.post('/', async (req: Request, res: Response) => {
     try {
         const body = req.body;
+        if(!(body.email&&body.password)){
+            throw new Error("Bad Request");
+        }
         let userDetails = { email: body.email, password: body.password };
         
-        const user = await User.findOne({ email: userDetails.email })
+        const user:User|null = await User.findOne({ email: userDetails.email })
+        if(!user?.password){
+            throw new Error("User not found");
+        }
         const isPasswordMatch = await bcrypt.compare(userDetails.password, user!.password);
 
         if (isPasswordMatch) {
-            res.send({ token: await authService.createToken(user!) })
+            const token = await authService.createToken(user!)
+            const send:Object = {"token":token}
+            logger.info(send)
+            res.json(send)
         } else {
             throw new Error("Invalid email or password");
         }
         logger.info(`[GET] - ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()} - Login - Success`);
-
     } catch (error:Error|any) {
         logger.error(`[GET] - ${new Date().toISOString()} - Login - Error: ${error}`);
         res.status(error!.status!|400).send(error.message);
