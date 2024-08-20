@@ -8,10 +8,11 @@ const logger = log4js.getLogger();
 const tokenAuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
     try {
         const token = req.headers.authorization?.split(' ')[1];
-        
-        if (!token) {
-            throw new Error("Invalid token");
+
+        if (!token||token==undefined) {
+            throw new Error("No token provided");
         }
+        
         jwt.verify(token, TOKEN_KEY);
         logger.info(`${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()} - TokenAuthMiddleware - Success`);
 

@@ -75,7 +75,7 @@ router.get('/', async (req: Request, res: Response) => {
  *         description: User details
  */
 
-router.get('/users/:id', (req: Request, res: Response) => {
+router.get('/:id', (req: Request, res: Response) => {
     try {
         const userId = req.params.id;
         logger.info(`[GET] - ${new Date().toISOString()} - getUserById - Success`);
@@ -129,7 +129,7 @@ router.post('/', async (req: Request, res: Response) => {
         }
         const createdUser = await userService.createUser(user);
         logger.info(`[POST] - ${new Date().toISOString()} - createUser - Success`);
-        res.send(createdUser);
+        res.send({user: createdUser});
     } catch (error:Error|any) {
         logger.error(`[POST] - ${new Date().toISOString()} - createUser - Error: ${error}`);
         res.status(400).send(error!.message);
