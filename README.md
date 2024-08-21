@@ -26,8 +26,6 @@ This is a Node.js TypeScript project following the REST architecture. It include
 - Run tests using `npm test`.
 
 ## Endpoints
-- **/api/login**: POST endpoint for user login and JWT token generation.
-- **/api/resource**: GET endpoint to fetch a resource (example endpoint).
 - **/api/auth**: CRUD operations for authentication.
 - **/api/orders**: CRUD operations for orders.
 - **/api/users**: CRUD operations for users.
