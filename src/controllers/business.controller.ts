@@ -46,9 +46,10 @@ const authService = new AuthService()
 
 router.get('/', async (req: Request, res: Response) => {
     try {
-        const business = await businessService.getBusiness();
-        res.send(business)
+        const business:Business = await businessService.getBusiness();
         logger.info(`[GET] - ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()} - getBusiness - Success`);
+
+        res.json(business)
 
     } catch (error:any) {
         logger.error(`[GET] - ${new Date().toISOString()} - getBusiness - Error: ${error}`);
@@ -75,7 +76,7 @@ router.post('/', async (req:Request, res:Response) => {
         const body = req.body;
         const business = await businessService.createBusiness(body);
         logger.info(`[POST] - ${new Date().toISOString()} - createBusiness - Success`);
-        res.send(business)
+        res.json(business)
     } catch (error:any) {
         logger.error(`[POST] - ${new Date().toISOString()} - createBusiness - Error: ${error}`);
         const statusCode = error!.status! || 500;
@@ -96,9 +97,13 @@ router.post('/', async (req:Request, res:Response) => {
  *         description: User updated successfully
  */
 
-router.put('/:id', (req: Request, res: Response) => {
+router.put('/:id', async (req: Request, res: Response) => {
     try {
-        logger.info(`[UPDATE] - ${new Date().toISOString()} - updateBusiness - Success`);
+        const businessId = req.params.id;
+        const business = req.body;
+        const businessUpdated:Business = await businessService.updateBusiness(businessId, business)
+        logger.info(`[UPDATE] - ${new Date().toISOString()} - updateBusiness - Success: ${businessUpdated}`);
+        res.json(businessUpdated)
     } catch (error:any) {
         logger.error(`[UPDATE] - ${new Date().toISOString()} - updateBusiness - Error: ${error}`);
         const statusCode = error!.status! || 500;
@@ -129,8 +134,8 @@ router.put('/:id', (req: Request, res: Response) => {
 router.delete('/:id', async (req: Request, res: Response): Promise<void> => {
     try {
         const businessId = req.params.id;
-        await businessService.deleteBusiness(businessId);
-        logger.info(`[DELETE] - ${new Date().toISOString()} - deleteBusiness - Success`);
+        const businessDeleted = await businessService.deleteBusiness(businessId);
+        logger.info(`[DELETE] - ${new Date().toISOString()} - deleteBusiness - Success: ${businessDeleted}`);
 
         res.status(204).send();
     } catch (error:any) {

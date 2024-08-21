@@ -11,13 +11,6 @@ const logger = log4js.getLogger();
 
 const router = express.Router();
 const orderService = new OrderService();
-const bcrypt = require('bcrypt');
-import { saltRounds, TOKEN_KEY } from "../../constants";
-import AuthService from '../services/auth.service';
-import tokenAuthMiddleware from '../middlewares/auth.middleware';
-import { isContext } from 'vm';
-import { RequestBody } from 'swagger-jsdoc';
-const authService = new AuthService()
 
 
 /**
@@ -46,8 +39,7 @@ router.get('/', async (req: Request, res: Response) => {
     try {
         let Orders = await orderService.getOrders();
         logger.info(`[GET] - ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()} - getOrders - Success`);
-        res.send(Orders)
-
+        res.json(Orders)
     } catch (error:any) {
         logger.error(`[GET] - ${new Date().toISOString()} - getOrders - Error: ${error}`);
         const statusCode = error!.status! || 500;
@@ -75,11 +67,12 @@ router.get('/', async (req: Request, res: Response) => {
  *         description: Order details
  */
 
-router.get('/Orders/:id', (req: Request, res: Response) => {
+router.get('/:id', async (req: Request, res: Response) => {
     try {
         const OrderId = req.params.id;
+        const order = await orderService.getOrderById(OrderId)
         logger.info(`[GET] - ${new Date().toISOString()} - getOrderById - Success`);
-        return orderService.getOrderById(OrderId);
+        res.json(order) ;
     } catch (error:any) {
         logger.error(`[GET] - ${new Date().toISOString()} - getOrderById - Error: ${error}`);
         const statusCode = error!.status! || 500;
@@ -103,15 +96,13 @@ router.get('/Orders/:id', (req: Request, res: Response) => {
 
 router.post('/', async (req: Request, res: Response) => {
     try {
-        const body = req.body;
-
-        const Order: Order = body.order;
-        if (!Order) {
+        const order: Order = req.body;
+        if (!order) {
             throw new Error("Create order faild");
         }
-        const createdOrder = await orderService.createOrder(Order);
+        const createdOrder = await orderService.createOrder(order);
         logger.info(`[POST] - ${new Date().toISOString()} - createOrder - Success`);
-        res.send(createdOrder);
+        res.json(createdOrder);
     } catch (error:Error|any) {
         logger.error(`[POST] - ${new Date().toISOString()} - createOrder - Error: ${error}`);
         res.status(400).send(error!.message);
@@ -132,13 +123,13 @@ router.post('/', async (req: Request, res: Response) => {
  *         description: Order updated successfully
  */
 
-router.put('/:id', (req: Request, res: Response) => {
+router.put('/:id', async (req: Request, res: Response) => {
     try {
+        const orderId: string = req.params.id;
+        const order: Order = req.body;
+        const updatedOrder = await orderService.updateOrder(orderId,order);
         logger.info(`[UPDATE] - ${new Date().toISOString()} - updateOrder - Success`);
-
-        const updatedOrder: Order = req.body;
-        const Order = orderService.updateOrder(updatedOrder);
-        res.status(200).json(Order);
+        res.json(updatedOrder);
     } catch (error:any) {
         logger.error(`[UPDATE] - ${new Date().toISOString()} - updateOrder - Error: ${error}`);
         const statusCode = error!.status! || 500;
@@ -172,7 +163,7 @@ router.delete('/:id', async (req: Request, res: Response): Promise<void> => {
         await orderService.deleteOrder(OrderId);
         logger.info(`[DELETE] - ${new Date().toISOString()} - deleteOrder - Success`);
 
-        res.status(204).send();
+        res.json();
     } catch (error:any) {
         logger.error(`[DELETE] - ${new Date().toISOString()} - deleteOrder - Error: ${error}`);
         const statusCode = error!.status! || 500;

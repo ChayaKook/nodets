@@ -11,7 +11,7 @@ class OrderService {
             if (!Order) {
                 throw new Error(`Order not found with ID ${OrderId}`);
             }
-            return Order;
+            return order;
         } catch (error) {
             throw error;
         }
@@ -31,8 +31,8 @@ class OrderService {
 
     public async createOrder(order: Order): Promise<Order> {
         try {
-            const newOrder = await Order.create(Order);
-            if (!Order) {
+            const newOrder = await Order.create(order);
+            if (!order) {
                 throw new Error(`Order faild to created`);
             }
             return newOrder;
@@ -41,9 +41,9 @@ class OrderService {
         }
     }
 
-    public async updateOrder(order: Order): Promise<Order|any> {
+    public async updateOrder(orderId: string, order: Order): Promise<Order|any> {
         try {
-            const newOrder = await Order.updateOne(order);
+            const newOrder = await Order.findByIdAndUpdate(orderId, order, { new: true });
             return newOrder;
          } catch (error) {
              throw error

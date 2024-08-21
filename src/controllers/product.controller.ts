@@ -11,14 +11,6 @@ const logger = log4js.getLogger();
 
 const router = express.Router();
 const productService = new ProductService();
-const bcrypt = require('bcrypt');
-import { saltRounds, TOKEN_KEY } from "../../constants";
-import AuthService from '../services/auth.service';
-import tokenAuthMiddleware from '../middlewares/auth.middleware';
-import { isContext } from 'vm';
-import { RequestBody } from 'swagger-jsdoc';
-const authService = new AuthService()
-
 
 /**
  * @swagger
@@ -46,7 +38,7 @@ router.get('/', async (req: Request, res: Response) => {
     try {
       let products = await productService.getProducts();
       logger.info(`[GET] - ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()} - getproducts - Success`);
-      res.send(products)
+      res.json(products)
     } catch (error:any) {
       logger.error(`[GET] - ${new Date().toISOString()} - getproducts - Error: ${error}`);
       const statusCode = error!.status! || 500;
@@ -73,11 +65,11 @@ router.get('/', async (req: Request, res: Response) => {
  *         description: product details
  */
 
-router.get('/products/:id', (req: Request, res: Response) => {
+router.get('/:id', async (req: Request, res: Response) => {
     try {
         const productId = req.params.id;
         logger.info(`[GET] - ${new Date().toISOString()} - getproductById - Success`);
-        return productService.getProductById(productId);
+        res.json(await productService.getProductById(productId));
     } catch (error:any) {
         logger.error(`[GET] - ${new Date().toISOString()} - getproductById - Error: ${error}`);
         const statusCode = error!.status! || 500;
@@ -109,7 +101,7 @@ router.post('/', async (req: Request, res: Response) => {
         }
         const createdproduct = await productService.createProduct(product);
         logger.info(`[POST] - ${new Date().toISOString()} - createproduct - Success`);
-        res.send(createdproduct);
+        res.json(createdproduct);
     } catch (error:Error|any) {
         logger.error(`[POST] - ${new Date().toISOString()} - createproduct - Error: ${error}`);
         res.status(400).send(error!.message);
@@ -130,13 +122,13 @@ router.post('/', async (req: Request, res: Response) => {
  *         description: product updated successfully
  */
 
-router.put('/:id', (req: Request, res: Response) => {
+router.put('/:id', async (req: Request, res: Response) => {
     try {
-        logger.info(`[UPDATE] - ${new Date().toISOString()} - updateproduct - Success`);
-
+        const productId:string = req.params.id
         const updatedproduct: Product = req.body;
-        const product = productService.updateProduct(updatedproduct);
-        res.status(200).json(product);
+        const product =await productService.updateProduct(productId, updatedproduct);
+        logger.info(`[UPDATE] - ${new Date().toISOString()} - updateproduct - Success`);
+        res.json(product);
     } catch (error) {
         logger.error(`[UPDATE] - ${new Date().toISOString()} - updateproduct - Error: ${error}`);
         throw error;
@@ -168,8 +160,7 @@ router.delete('/:id', async (req: Request, res: Response): Promise<void> => {
         const productId = req.params.id;
         await productService.deleteProduct(productId);
         logger.info(`[DELETE] - ${new Date().toISOString()} - deleteproduct - Success`);
-
-        res.status(204).send();
+        res.json();
     } catch (error) {
         logger.error(`[DELETE] - ${new Date().toISOString()} - deleteproduct - Error: ${error}`);
         throw error;

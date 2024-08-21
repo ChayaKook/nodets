@@ -41,9 +41,9 @@ class ProductService {
         }
     }
 
-    public async updateProduct(product: Product): Promise<Product|any> {
+    public async updateProduct(productId:string, product: Product): Promise<Product|any> {
         try {
-            const newProduct = await Product.updateOne(product);
+            const newProduct = await Product.findByIdAndUpdate(productId, product, { new: true });
             return newProduct;
          } catch (error) {
              throw error

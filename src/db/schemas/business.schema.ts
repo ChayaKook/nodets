@@ -6,7 +6,7 @@ import { User } from "./user.schema";
  * It has five properties: _id, name, phone, address, and admin, all of which are strings or objects.
  */
 export interface Business {
-  _id: string;
+  _id?: string;
   name: string;
   phone: string;
   address: string;
@@ -18,7 +18,7 @@ export interface Business {
  * the properties that are specific to a Business document.
  */
 export interface BusinessDocument extends Document {
-  _id: string;
+  _id?: string;
   name: string;
   phone: string;
   address: string;

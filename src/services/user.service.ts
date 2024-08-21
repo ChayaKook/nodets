@@ -46,18 +46,18 @@ class UserService {
         }
     }
 
-    public async updateUser(user: User): Promise<User|any> {
+    public async updateUser(userId:string, user: User): Promise<User|any> {
         try {
-            const newUser = await User.updateOne(user);
-            return newUser;
+            const updatedUser = await User.findByIdAndUpdate(userId, user, { new: true });
+            return updatedUser;
          } catch (error) {
              throw error
          }
     }
 
-    public async deleteUser(userId: string): Promise<void> {
+    public async deleteUser(userId: string): Promise<User|any> {
         try {
-           User.findOneAndDelete({ _id: userId });
+           return User.findOneAndDelete({ _id: userId });
         } catch (error) {
             throw error
         }

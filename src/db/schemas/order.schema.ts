@@ -18,7 +18,7 @@ export interface Order {
    * the properties that are specific to an Order document.
    */
   export interface OrderDocument extends Document {
-    _id: string;
+    _id?: string;
     userId: string;
     products: string[];
     totalSum: number;
@@ -33,7 +33,6 @@ export interface Order {
    * userId, products, total, status, and date, all of which are required.
    */
   const OrderSchema = new mongoose.Schema({
-    userId: { type: String, required: true },
     products: { type: [{ type: String, ref: 'Product' }], required: true },
     totalSum: { type: Number, required: true },
     status: { type: String, required: true },

@@ -48,7 +48,7 @@ router.get('/', async (req: Request, res: Response) => {
         res.send(users)
         logger.info(`[GET] - ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()} - getUsers - Success`);
 
-    } catch (error:any) {
+    } catch (error: any) {
         logger.error(`[GET] - ${new Date().toISOString()} - getUsers - Error: ${error}`);
         const statusCode = error!.status! || 500;
         res.status(statusCode).send({ message: error.message })
@@ -75,12 +75,12 @@ router.get('/', async (req: Request, res: Response) => {
  *         description: User details
  */
 
-router.get('/:id', (req: Request, res: Response) => {
+router.get('/:id', async (req: Request, res: Response) => {
     try {
         const userId = req.params.id;
         logger.info(`[GET] - ${new Date().toISOString()} - getUserById - Success`);
-        return userService.getUserById(userId);
-    } catch (error:any) {
+        res.json(await userService.getUserById(userId));
+    } catch (error: any) {
         logger.error(`[GET] - ${new Date().toISOString()} - getUserById - Error: ${error}`);
         const statusCode = error!.status! || 500;
         res.status(statusCode).send({ message: error.message })
@@ -117,7 +117,7 @@ router.get('/:id', (req: Request, res: Response) => {
 router.post('/', async (req: Request, res: Response) => {
     try {
         const body = req.body;
-        if(!(body.username&&body.password&&body.email)) {
+        if (!(body.username && body.password && body.email)) {
             throw new Error("Bad Request");
         }
         const hashedPassword = await bcrypt.hash(body.password, saltRounds);
@@ -130,7 +130,7 @@ router.post('/', async (req: Request, res: Response) => {
         logger.info(`[POST] - ${new Date().toISOString()} - createUser - Success ${createdUser._id}`);
         res.json(createdUser);
         // res.sendStatus(201).send(createdUser);
-    } catch (error:Error|any) {
+    } catch (error: Error | any) {
         logger.error(`[POST] - ${new Date().toISOString()} - createUser - Error: ${error}`);
         res.status(400).send(error!.message);
     }
@@ -152,11 +152,12 @@ router.post('/', async (req: Request, res: Response) => {
 
 router.put('/:id', async (req: Request, res: Response) => {
     try {
+        const userId: string = req.params.id;
         const user: User = req.body;
-        const updatedUser = await userService.updateUser(user);
-        logger.info(`[UPDATE] - ${new Date().toISOString()} - updateUser - Success ${JSON.stringify(updatedUser._id)}`);
+        const updatedUser = await userService.updateUser(userId, user);
+        logger.info(`[UPDATE] - ${new Date().toISOString()} - updateUser - Success ${JSON.stringify(updatedUser)}`);
         res.json(updatedUser);
-    } catch (error:any) {
+    } catch (error: any) {
         logger.error(`[UPDATE] - ${new Date().toISOString()} - updateUser - Error: ${error}`);
         const statusCode = error!.status! || 500;
         res.status(statusCode).send({ message: error.message })
@@ -186,10 +187,10 @@ router.put('/:id', async (req: Request, res: Response) => {
 router.delete('/:id', async (req: Request, res: Response): Promise<void> => {
     try {
         const userId = req.params.id;
-        await userService.deleteUser(userId);
-        logger.info(`[DELETE] - ${new Date().toISOString()} - deleteUser - Success`);
+        const user: User | any = await userService.deleteUser(userId);
+        logger.info(`[DELETE] - ${new Date().toISOString()} - deleteUser - Success: ${JSON.stringify(user)}`);
         res.status(204).send();
-    } catch (error:any) {
+    } catch (error: any) {
         logger.error(`[DELETE] - ${new Date().toISOString()} - deleteUser - Error: ${error}`);
         const statusCode = error!.status! || 500;
         res.status(statusCode).send({ message: error.message })

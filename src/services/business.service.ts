@@ -28,13 +28,16 @@ class BusinessService {
         }
     }
 
-    public async updateBusiness(business: Business): Promise<Business|any> {
+    public async updateBusiness(businessId: string, business: Business): Promise<Business|any> {
         try {
-            const newBusiness = await Business.updateOne(business);
-            if (!business) {
-                throw new Error(`business faild to update`);
+            const businessToUpdate = {
+                name:business.name,
+                phone:business.phone,
+                address:business.address,
+                admin:business.admin
             }
-            return newBusiness;
+            
+            return await Business.findByIdAndUpdate(businessId, businessToUpdate, { new: true });
         } catch (error) {
             throw error;
         }

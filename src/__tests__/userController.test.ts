@@ -15,10 +15,12 @@ describe('User API', () => {
     let userTest: User | any
 
     beforeAll(async () => {
+        logger.info("userController start")
+
         try {
             //get token for all tests
-            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmM1MTQ1NDZhNDBhNDY5YTNjMGExNTUiLCJ1c2VyTmFtZSI6ImJhdGkiLCJlbWFpbCI6ImJAYiIsImlhdCI6MTcyNDE5MTg0NCwiZXhwIjoxNzI0MjAyNjQ0fQ.DJ62YY82O5wQ85F6MiuOqjvOKtw81KqRCNJ211el0WQ"
-            // logger.info("before all")
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmM1MjY0NTE3MDE1NTIxMGViZjY2ODgiLCJ1c2VyTmFtZSI6InRlc3QiLCJlbWFpbCI6InRAdCIsImlhdCI6MTcyNDIyNzk0NiwiZXhwIjoxNzI0MjM4NzQ2fQ.8f0NMtLizVqGOQEb9FNRzGp2DSyLhzzbgxadPA_PzXc"
+             // logger.info("before all")
 
             // const user = {
             //     userName: "bati",
@@ -43,11 +45,16 @@ describe('User API', () => {
         }
     })
 
+    beforeEach(() => {
+        jest.clearAllMocks();
+    })
     afterEach(() => {
         jest.restoreAllMocks();
     });
 
     afterAll(async () => {
+        logger.info("userController finish")
+
         // const newUser = await request(app).delete(`/users/${userTestId}`)
         // logger.info("User deleted")
     });
@@ -80,6 +87,7 @@ describe('User API', () => {
         expect(response.body.username).toBe('test');
     });
 
+
     it('PUT /users/:id', async () => {
         const updatedUser: User = {
             username: 'test updated',
@@ -96,6 +104,16 @@ describe('User API', () => {
         expect(response.status).toBe(200);
     });
 
+    it('GET /users/:id', async () => {
+
+        const response = await request(app)
+            .get('/users/'+userTestId)
+            .set('Authorization', `Bearer ${token}`);
+        expect(response).toHaveProperty('status', 200);
+        expect(response.body.email).toBe('t@t updated');
+        
+    });
+
     it('DELETE /users/:id', async () => {
         const response = await request(app)
             .delete(`/users/${userTestId}`)
@@ -105,184 +123,3 @@ describe('User API', () => {
     });
 
 });
-
-// describe('User API', async () => {
-//     let userId: string;
-
-//     const getToken = async () => {
-//         const user: User = {
-//             username: 'bati',
-//             email: 'b@b',
-//             password: 'bbb',
-//         };
-
-//         const response = await request(app).post('/api/auth').send(user);
-//         return response.body.token;
-//     };
-
-//     const token: string = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmMzOGViNzcxYjk5NzQzM2JjM2UwYzQiLCJ1c2VyTmFtZSI6ImJhdGkiLCJlbWFpbCI6ImJAYiIsImlhdCI6MTcyNDE1MzQxNiwiZXhwIjoxNzI0MTY0MjE2fQ.EQX4qUCkz0z9ylviSPTyMXmcwweleAoAEA9BvBFPNlk"
-
-
-//     beforeAll(async () => {
-//         jest.clearAllMocks();
-//     });
-
-//     afterEach(() => {
-//         jest.restoreAllMocks();
-//     });
-
-//     it('GET /api/users', async () => {
-//         const response = await request(app)
-//             .get('/api/users')
-//             .set('Authorization', `Bearer ${token}`);
-//         expect(response.status).toBeLessThan(401);
-//         expect(response.status).toBeGreaterThanOrEqual(200);
-//         expect(response.status).toBe(200);
-//         expect(Array.isArray(response.body)).toBe(true);
-//     });
-
-//     // it('POST /api/users', async () => {
-//     //     const user: User = {
-//     //         username: 'shay',
-//     //         email: 's@s',
-//     //         password: 'sss',
-//     //     };
-
-//     //     const response = await request(app)
-//     //         .post('/api/users')
-//     //         .send(user)
-//     //         .set('Authorization', `Bearer ${token}`);
-//     //     expect(response.status).toBeLessThan(401);
-//     //     expect(response.status).toBeGreaterThanOrEqual(200);
-//     //     expect(response.status).toBe(201);
-//     //     expect(response.body.username).toBe('shay');
-//     //     expect(response.body.email).toBe('s@s');
-//     // });
-
-//     // it('PUT /api/users/:id', async () => {
-//     //     const updatedUser: User = {
-//     //         username: 'shay updated',
-//     //         email: 's@s updated',
-//     //         password: 'sss updated',
-//     //     };
-
-//     //     const response = await request(app)
-//     //         .put(`/api/users/${userId}`)
-//     //         .send(updatedUser)
-//     //         .set('Authorization', `Bearer ${token}`);
-//     //     expect(response.status).toBeLessThan(401);
-//     //     expect(response.status).toBeGreaterThanOrEqual(200);
-//     //     expect(response.status).toBe(200);
-//     //     expect(response.body.username).toBe('shay updated');
-//     //     expect(response.body.email).toBe('s@s updated');
-//     // });
-
-//     // it('DELETE /api/users/:id', async () => {
-//     //     const response = await request(app)
-//     //         .delete(`/api/users/${userId}`)
-//     //         .set('Authorization', `Bearer ${token}`);
-//     //     expect(response.status).toBeLessThan(401);
-//     //     expect(response.status).toBeGreaterThanOrEqual(200);
-//     //     expect(response.status).toBe(204);
-//     // });
-
-//     // beforeAll(async () => {
-//     //     const user: User = {
-//     //         username: 'bati',
-//     //         email: 'b@b',
-//     //         password: 'bbb',
-//     //     };
-
-//     //     const response = await request(app).post('/api/users').send(user);
-//     //     userId = response.body._id;
-//     // });
-
-//     // afterAll(async () => {
-//     //     await request(app).delete(`/api/users/${userId}`);
-//     // });
-
-//     // describe('GET /api/users/:id', () => {
-//     //     it('returns a user by ID', async () => {
-//     //         const response = await request(app).get(`/api/users/${userId}`).set('Authorization', `Bearer ${token}`);
-//     //         if (response.status === 401 || response.status === 403) {
-//     //             return;
-//     //         }
-//     //         expect(response.status).toBeLessThan(401);
-//     //         expect(response.status).toBeGreaterThanOrEqual(200);
-//     //         expect(response.status).toBe(200);
-//     //         expect(response.body._id).toBe(userId);
-//     //         expect(response.body.username).toBe('chani');
-//     //         expect(response.body.name).toBe('chani');
-//     //         expect(response.body.email).toBe('c@c');
-//     //     });
-//     // });
-
-//     // describe('GET /api/users', () => {
-//     //     it('returns all users', async () => {
-//     //         const response = await request(app).get('/api/users').set('Authorization', `Bearer ${token}`);
-//     //         if (response.status === 401 || response.status === 403) {
-//     //             return;
-//     //         }
-//     //         expect(response.status).toBeLessThan(401);
-//     //         expect(response.status).toBeGreaterThanOrEqual(200);
-//     //         expect(response.status).toBe(200);
-//     //         expect(Array.isArray(response.body)).toBe(true);
-//     //     });
-//     // });
-
-//     // describe('POST /api/users', () => {
-//     //     it('creates a new user', async () => {
-//     //         const user: User = {
-//     //             username: 'shay',
-//     //             email: 's@s',
-//     //             password: 'sss',
-//     //         };
-
-//     //         const response = await request(app).post('/api/users').send(user).set('Authorization', `Bearer ${token}`);
-//     //         if (response.status === 401 || response.status === 403) {
-//     //             return;
-//     //         }
-//     //         expect(response.status).toBeLessThan(401);
-//     //         expect(response.status).toBeGreaterThanOrEqual(200);
-//     //         expect(response.status).toBe(201);
-//     //         expect(response.body.username).toBe('shay');
-//     //         expect(response.body.email).toBe('s@s');
-//     //     });
-//     // });
-
-//     // describe('PUT /api/users/:id', () => {
-//     //     it('updates a user by ID', async () => {
-//     //         const updatedUser: User = {
-//     //             username: 'shay updated',
-//     //             email: 's@s updated',
-//     //             password: 'sss updated',
-//     //         };
-
-//     //         const response = await request(app).put(`/api/users/${userId}`).send(updatedUser).set('Authorization', `Bearer ${token}`);
-//     //         if (response.status === 401 || response.status === 403) {
-//     //             return;
-//     //         }
-//     //         expect(response.status).toBeLessThan(401);
-//     //         expect(response.status).toBeGreaterThanOrEqual(200);
-//     //         expect(response.status).toBe(200);
-//     //         expect(response.body.username).toBe('shay updated');
-//     //         expect(response.body.email).toBe('s@s updated');
-//     //     });
-//     // });
-
-//     // describe('DELETE /api/users/:id', () => {
-//     //     it('deletes a user by ID', async () => {
-//     //         const response = await request(app).delete(`/api/users/${userId}`).set('Authorization', `Bearer ${token}`);
-//     //         if (response.status === 401 || response.status === 403) {
-//     //             return;
-//     //         }
-//     //         expect(response.status).toBeLessThan(401);
-//     //         expect(response.status).toBeGreaterThanOrEqual(200);
-//     //         expect(response.status).toBe(204);
-//     //     });
-//     // });
-// });
-
-
-
-
