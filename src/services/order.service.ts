@@ -50,9 +50,10 @@ class OrderService {
          }
     }
 
-    public async deleteOrder(OrderId: string): Promise<void> {
+    public async deleteOrder(OrderId: string): Promise<Order|any> {
         try {
-           Order.findOneAndDelete({ _id: OrderId });
+           const order:Order|any = await Order.findOneAndDelete({ _id: OrderId });
+           return order;
         } catch (error) {
             throw error
         }

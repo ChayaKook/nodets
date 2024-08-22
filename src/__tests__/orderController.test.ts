@@ -54,7 +54,12 @@ describe('order API', () => {
             totalSum: 200,
             status: "בטיפול",
             date: new Date("2022-01-01"),
-            userId: '66c51eecde32c42ad7879edd'
+            // userId: '66c51eecde32c42ad7879edd'
+            user:{
+                name: 'test',
+                phone: '02-212-213',
+                email: 'test@'
+            }
         };
 
         const response = await request(app)

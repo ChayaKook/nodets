@@ -6,7 +6,12 @@ import mongoose from "mongoose";
  */
 export interface Order {
     _id?: string;
-    userId: string;
+    // userId: string;
+    user:{
+      name:string,
+      phone: string,
+      email: string
+    };
     products: string[];
     totalSum: number;
     status: string;
@@ -19,7 +24,12 @@ export interface Order {
    */
   export interface OrderDocument extends Document {
     _id?: string;
-    userId: string;
+    // userId: string;
+    user:{
+      name:string,
+      phone: string,
+      email: string
+    };
     products: string[];
     totalSum: number;
     status: string;
@@ -33,6 +43,11 @@ export interface Order {
    * userId, products, total, status, and date, all of which are required.
    */
   const OrderSchema = new mongoose.Schema({
+    user: {
+      name: { type: String, required: true },
+      phone: { type: String, required: true },
+      email: { type: String, required: true }
+    },
     products: { type: [{ type: String, ref: 'Product' }], required: true },
     totalSum: { type: Number, required: true },
     status: { type: String, required: true },
