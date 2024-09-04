@@ -62,4 +62,20 @@ router.post('/', async (req: Request, res: Response) => {
     }
 });
 
+router.post('/validate', async (req: Request, res: Response) => {
+    try {
+        const token = req.body.token
+        if(!token){
+            throw new Error("Bad Request");
+        }
+        const decoded = await authService.decodeToken(token)
+        logger.info(decoded)
+        res.json(true)
+    } catch (error:Error|any) {
+        logger.error(`[GET] - ${new Date().toISOString()} - Login - Error: ${error}`);
+        // res.status(error!.status!|400).send(error.message);
+        res.json(false)
+    }
+});
+
 export { router };

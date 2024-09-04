@@ -5,6 +5,7 @@ import express from 'express';
 import { Order } from '../db/schemas/order.schema'
 import log4js from 'log4js';
 import OrderService from '../services/order.service';
+import tokenAuthMiddleware from '../middlewares/auth.middleware';
 
 log4js.configure('./log4js.json');
 const logger = log4js.getLogger();
@@ -35,7 +36,7 @@ const orderService = new OrderService();
  *         description: A list of Orders
  */
 
-router.get('/', async (req: Request, res: Response) => {
+router.get('/', (req: Request, res: Response, next: NextFunction) => tokenAuthMiddleware(req, res, next), async (req: Request, res: Response) => {
     try {
         let Orders = await orderService.getOrders();
         logger.info(`[GET] - ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()} - getOrders - Success`);
@@ -172,3 +173,7 @@ router.delete('/:id', async (req: Request, res: Response): Promise<void> => {
 });
 
 export { router };
+    function verifyAuthorizationLevel(arg0: number): import("express-serve-static-core").RequestHandler<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>> {
+        throw new Error('Function not implemented.');
+    }
+

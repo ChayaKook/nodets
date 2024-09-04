@@ -73,10 +73,10 @@ router.get('/', async (req: Request, res: Response) => {
 
 router.post('/', async (req:Request, res:Response) => {
     try {
-        const body = req.body;
-        const business = await businessService.createBusiness(body);
+        const business = req.body;
+        const newBusiness = await businessService.createBusiness(business);
         logger.info(`[POST] - ${new Date().toISOString()} - createBusiness - Success`);
-        res.json(business)
+        res.json(newBusiness)
     } catch (error:any) {
         logger.error(`[POST] - ${new Date().toISOString()} - createBusiness - Error: ${error}`);
         const statusCode = error!.status! || 500;

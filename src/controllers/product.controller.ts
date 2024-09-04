@@ -93,11 +93,9 @@ router.get('/:id', async (req: Request, res: Response) => {
 
 router.post('/', async (req: Request, res: Response) => {
     try {
-        const body = req.body;
-
-        const product: Product = body.product;
+        const product: Product = req.body;
         if (!product) {
-            throw new Error("Create product faild");
+            throw new Error("there is no product to create");
         }
         const createdproduct = await productService.createProduct(product);
         logger.info(`[POST] - ${new Date().toISOString()} - createproduct - Success`);
