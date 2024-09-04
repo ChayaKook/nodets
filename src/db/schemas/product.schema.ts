@@ -10,6 +10,7 @@ export interface Product {
   description: string;
   price: number;
   category: string;
+  image: string;
 }
 
 /**
@@ -22,6 +23,8 @@ export interface ProductDocument extends Document {
   description: string;
   price: number;
   category: string;
+  image: string;
+
 }
 
 /**
@@ -34,7 +37,9 @@ const ProductSchema = new mongoose.Schema({
   name: { type: String, required: true },
   description: { type: String, required: true },
   price: { type: Number, required: true },
-  category: { type: String, required: true }
+  category: { type: String, required: true },
+  image: { type: String, required: false }
+
 });
 
 export const Product = mongoose.model<ProductDocument>('Product', ProductSchema);

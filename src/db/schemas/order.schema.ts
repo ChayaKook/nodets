@@ -12,10 +12,12 @@ export interface Order {
       phone: string,
       email: string
     };
-    products: string[];
+    product: string;
+    quantity: number;
     totalSum: number;
     status: string;
     date: Date;
+    note: string
   }
   
   /**
@@ -30,10 +32,12 @@ export interface Order {
       phone: string,
       email: string
     };
-    products: string[];
+    product: string;
+    quantity: number;
     totalSum: number;
     status: string;
     date: Date;
+    note: string;
   }
   
   /**
@@ -48,10 +52,12 @@ export interface Order {
       phone: { type: String, required: true },
       email: { type: String, required: true }
     },
-    products: { type: [{ type: String, ref: 'Product' }], required: true },
+    product: { type: String, required: true },
+    quantity: { type: String, required: true },
     totalSum: { type: Number, required: true },
     status: { type: String, required: true },
-    date: { type: Date, required: true }
+    date: { type: Date, required: true },
+    note: { type: String, required: false }
   });
   
   export const Order = mongoose.model<OrderDocument>('Order', OrderSchema);

@@ -17,7 +17,7 @@ export interface User {
  * automatically added by Mongoose and is a unique identifier for the document.
  */
 export interface UserDocument extends Document {
-  _id: string;
+  _id?: string;
   username: string;
   email: string;
   password: string;
