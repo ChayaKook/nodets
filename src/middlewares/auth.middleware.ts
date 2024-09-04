@@ -19,9 +19,7 @@ const tokenAuthMiddleware = (req: Request, res: Response, next: NextFunction) =>
         next();
     } catch (error) {
         logger.error(`${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()} - TokenAuthMiddleware - Faild - Error: ${error}`);
-
         return res.status(401).json({ message: error });
-        // next();
     }
 };
 

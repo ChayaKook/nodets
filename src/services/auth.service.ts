@@ -10,7 +10,7 @@ class AuthService {
     public async createToken(user: User): Promise<any> {
         try {
             const payload = { _id: user._id!, userName: user.username, email: user.email }
-            const token = jwt.sign(payload, TOKEN_KEY, { expiresIn: '3h' });
+            const token = jwt.sign(payload, TOKEN_KEY, { expiresIn: '24h' });
             return token;
         }
         catch (error) {
