@@ -12,6 +12,8 @@ import {router as authController} from './controllers/auth.controller';
 import {router as productController} from './controllers/product.controller';
 import {router as businessController} from './controllers/business.controller';
 import {router as orderController} from './controllers/order.controller';
+import {router as sendEmailController} from './controllers/sendEmail.controller';
+
 import tokenAuthMiddleware from './middlewares/auth.middleware';
 const cors = require('cors');
 
@@ -47,6 +49,7 @@ app.use('/users', userController);
 app.use('/products', productController);
 app.use('/business', businessController);
 app.use('/orders', orderController);
+app.use('/sendEmail', sendEmailController);
 app.use(errorHandler);
 app.use(notFoundHandler)
 

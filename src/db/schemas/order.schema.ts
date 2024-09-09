@@ -12,7 +12,7 @@ export interface Order {
       phone: string,
       email: string
     };
-    product: string;
+    product: {_id:string, name:string};
     quantity: number;
     totalSum: number;
     status: string;
@@ -32,7 +32,7 @@ export interface Order {
       phone: string,
       email: string
     };
-    product: string;
+    product: {_id:string, name:string};
     quantity: number;
     totalSum: number;
     status: string;
@@ -52,7 +52,7 @@ export interface Order {
       phone: { type: String, required: true },
       email: { type: String, required: true }
     },
-    product: { type: String, required: true },
+    product: { _id:{type: String, required: true}, name:{type: String, required: true} },
     quantity: { type: String, required: true },
     totalSum: { type: Number, required: true },
     status: { type: String, required: true },
